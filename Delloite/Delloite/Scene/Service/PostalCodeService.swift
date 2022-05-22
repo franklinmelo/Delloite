@@ -16,6 +16,16 @@ struct PostalCodeService {
             print("File already exists")
             completion(.success(convertCVSToPostalCode(filePath: destinationUrl.path)))
         }
+        else if let dataFromURL = NSData(contentsOf: url) {
+            if dataFromURL.write(to: destinationUrl, atomically: true) {
+                print("file saved sync")
+                completion(.success(convertCVSToPostalCode(filePath: destinationUrl.path)))
+            }
+            else {
+                print("error saving file sync")
+                completion(.failure(.saveError))
+            }
+        }
         else {
             print("File not exists")
             completion(.failure(.loadLocalFileError))
@@ -43,7 +53,7 @@ struct PostalCodeService {
                 if let data = data {
                     do {
                         try data.write(to: destinationUrl, options: Data.WritingOptions.atomic)
-                        print("File saved")
+                        print("File saved async")
                         completion(.success(convertCVSToPostalCode(filePath: destinationUrl.path)))
                     } catch {
                         completion(.failure(.saveError))

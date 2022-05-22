@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA1098D1283A5DD90043AF85 /* PostalCodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1098D0283A5DD90043AF85 /* PostalCodeCell.swift */; };
 		DAF6C213283992E20061CE4E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF6C212283992E20061CE4E /* AppDelegate.swift */; };
 		DAF6C215283992E20061CE4E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF6C214283992E20061CE4E /* SceneDelegate.swift */; };
 		DAF6C21C283992E50061CE4E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DAF6C21B283992E50061CE4E /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DA1098D0283A5DD90043AF85 /* PostalCodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostalCodeCell.swift; sourceTree = "<group>"; };
 		DAF6C20F283992E20061CE4E /* Delloite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Delloite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAF6C212283992E20061CE4E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DAF6C214283992E20061CE4E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -41,6 +43,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DA1098CC283A5C880043AF85 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				DAF6C22D2839941B0061CE4E /* PostalCodeModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		DA1098CD283A5C900043AF85 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				DAF6C229283993F90061CE4E /* PostalCodeViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		DA1098CE283A5C9C0043AF85 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				DAF6C22B2839940C0061CE4E /* PostalCodeService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		DA1098CF283A5CA90043AF85 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				DAF6C227283993B80061CE4E /* PostalCodeViewController.swift */,
+				DA1098D0283A5DD90043AF85 /* PostalCodeCell.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
 		DAF6C206283992E20061CE4E = {
 			isa = PBXGroup;
 			children = (
@@ -73,10 +108,10 @@
 		DAF6C2262839939E0061CE4E /* Scene */ = {
 			isa = PBXGroup;
 			children = (
-				DAF6C22D2839941B0061CE4E /* PostalCodeModel.swift */,
-				DAF6C22B2839940C0061CE4E /* PostalCodeService.swift */,
-				DAF6C227283993B80061CE4E /* PostalCodeViewController.swift */,
-				DAF6C229283993F90061CE4E /* PostalCodeViewModel.swift */,
+				DA1098CC283A5C880043AF85 /* Model */,
+				DA1098CE283A5C9C0043AF85 /* Service */,
+				DA1098CF283A5CA90043AF85 /* ViewController */,
+				DA1098CD283A5C900043AF85 /* ViewModel */,
 			);
 			path = Scene;
 			sourceTree = "<group>";
@@ -155,6 +190,7 @@
 				DAF6C213283992E20061CE4E /* AppDelegate.swift in Sources */,
 				DAF6C228283993B80061CE4E /* PostalCodeViewController.swift in Sources */,
 				DAF6C22C2839940C0061CE4E /* PostalCodeService.swift in Sources */,
+				DA1098D1283A5DD90043AF85 /* PostalCodeCell.swift in Sources */,
 				DAF6C215283992E20061CE4E /* SceneDelegate.swift in Sources */,
 				DAF6C22A283993F90061CE4E /* PostalCodeViewModel.swift in Sources */,
 			);

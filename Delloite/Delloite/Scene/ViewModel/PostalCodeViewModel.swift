@@ -2,7 +2,7 @@ import Foundation
 
 protocol PostalCodeViewModelProtocol {
     var postalCodes: [PostalCode] { get }
-    func getContacts()
+    func getContacts(completion: @escaping(() -> Void))
 }
 
 final class PostalCodeViewModel: PostalCodeViewModelProtocol {
@@ -14,7 +14,7 @@ final class PostalCodeViewModel: PostalCodeViewModelProtocol {
         self.service = service
     }
     
-    func getContacts() {
+    func getContacts(completion: @escaping(() -> Void)) {
         guard let postalCodeUrl = postalCodeUrl else {
             return
         }
@@ -22,17 +22,20 @@ final class PostalCodeViewModel: PostalCodeViewModelProtocol {
             switch result {
             case let .success(postalCodes):
                 self?.postalCodes = postalCodes
+                print("Successfull get postal codes from sync file")
             case .failure:
-                self?.loadContactsAsync(with: postalCodeUrl)
+                self?.loadContactsAsync(with: postalCodeUrl, completion: completion)
             }
         })
     }
     
-    private func loadContactsAsync(with url: URL) {
+    private func loadContactsAsync(with url: URL, completion: @escaping(() -> Void)) {
         self.service?.loadFileAsync(url: url, completion: { [weak self] result in
             switch result {
             case let .success(postalCodes):
                 self?.postalCodes = postalCodes
+                print("Successfull get postal codes from async file")
+                completion()
             case let .failure(error):
                 print(error)
             }

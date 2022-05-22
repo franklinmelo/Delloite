@@ -36,4 +36,8 @@ struct PostalCode {
         extCodPostal = data[15]
         desigPostal = data[16]
     }
+    
+    func formatedPostalCode() -> String {
+        numCodPostal + "-" + extCodPostal + " " + desigPostal
+    }
 }
