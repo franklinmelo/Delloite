@@ -11,6 +11,11 @@ final class PostalCodeViewController: UIViewController {
         return $0
     }(UITableView(frame: .zero))
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        return $0
+    }(UIActivityIndicatorView())
+    
     private var viewModel: PostalCodeViewModelProtocol?
     
     init(viewModel: PostalCodeViewModelProtocol = PostalCodeViewModel()) {
@@ -32,6 +37,7 @@ final class PostalCodeViewController: UIViewController {
     
     private func setupView() {
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
     }
     
     private func setupConstraints() {
@@ -41,13 +47,20 @@ final class PostalCodeViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+        ])
     }
     
     private func configureViews() {
+        activityIndicator.startAnimating()
         title = "Postal code list"
         navigationController?.navigationBar.prefersLargeTitles = true
         viewModel?.getContacts { [weak self] in
             DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
                 self?.tableView.reloadData()
             }
         }

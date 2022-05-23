@@ -8,37 +8,15 @@ enum ServiceError: Error {
 }
 
 struct PostalCodeService {    
-    func loadFileSync(url: URL, completion: @escaping (Result<[PostalCode], ServiceError>) -> Void) {
-        guard let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-        let destinationUrl = documentsUrl.appendingPathComponent(url.lastPathComponent)
-        
-        if FileManager().fileExists(atPath: destinationUrl.path) {
-            print("File already exists")
-            completion(.success(convertCVSToPostalCode(filePath: destinationUrl.path)))
-        }
-        else if let dataFromURL = NSData(contentsOf: url) {
-            if dataFromURL.write(to: destinationUrl, atomically: true) {
-                print("file saved sync")
-                completion(.success(convertCVSToPostalCode(filePath: destinationUrl.path)))
-            }
-            else {
-                print("error saving file sync")
-                completion(.failure(.saveError))
-            }
-        }
-        else {
-            print("File not exists")
-            completion(.failure(.loadLocalFileError))
-        }
-    }
-    
     func loadFileAsync(url: URL, completion: @escaping (Result<[PostalCode], ServiceError>) -> Void) {
         guard let documentsUrl =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let destinationUrl = documentsUrl.appendingPathComponent(url.lastPathComponent)
         
         if FileManager().fileExists(atPath: destinationUrl.path) {
-            print("File already exists")
-            completion(.success(convertCVSToPostalCode(filePath: destinationUrl.path)))
+            DispatchQueue.global(qos: .background).async {
+                print("File already exists")
+                completion(.success(convertCVSToPostalCode(filePath: destinationUrl.path)))
+            }
         }
         else {
             let session = URLSession(configuration: URLSessionConfiguration.default)

@@ -16,21 +16,10 @@ final class PostalCodeViewModel: PostalCodeViewModelProtocol {
     
     func getContacts(completion: @escaping(() -> Void)) {
         guard let postalCodeUrl = postalCodeUrl else {
+            completion()
             return
         }
-        service?.loadFileSync(url: postalCodeUrl, completion: { [weak self] result in
-            switch result {
-            case let .success(postalCodes):
-                self?.postalCodes = postalCodes
-                print("Successfull get postal codes from sync file")
-            case .failure:
-                self?.loadContactsAsync(with: postalCodeUrl, completion: completion)
-            }
-        })
-    }
-    
-    private func loadContactsAsync(with url: URL, completion: @escaping(() -> Void)) {
-        self.service?.loadFileAsync(url: url, completion: { [weak self] result in
+        service?.loadFileAsync(url: postalCodeUrl, completion: { [weak self] result in
             switch result {
             case let .success(postalCodes):
                 self?.postalCodes = postalCodes
@@ -38,6 +27,7 @@ final class PostalCodeViewModel: PostalCodeViewModelProtocol {
                 completion()
             case let .failure(error):
                 print(error)
+                completion()
             }
         })
     }
