@@ -16,7 +16,22 @@ final class PostalCodeViewController: UIViewController {
         return $0
     }(UIActivityIndicatorView())
     
+    private lazy var searchController: UISearchController = {
+        $0.hidesNavigationBarDuringPresentation = false
+        return $0
+    }(UISearchController(searchResultsController: nil))
+    
+    private var isSearchBarEmpty: Bool {
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+    
+    private var isFiltering: Bool {
+        return searchController.isActive && !isSearchBarEmpty
+    }
+    
     private var viewModel: PostalCodeViewModelProtocol?
+    
+    private var tablewViewBottonConstraint: NSLayoutConstraint = .init()
     
     init(viewModel: PostalCodeViewModelProtocol = PostalCodeViewModel()) {
         super.init(nibName: nil, bundle: nil)
@@ -28,6 +43,8 @@ final class PostalCodeViewController: UIViewController {
         setupView()
         setupConstraints()
         configureViews()
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     @available(*, unavailable)
@@ -43,10 +60,18 @@ final class PostalCodeViewController: UIViewController {
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
+        
+        tablewViewBottonConstraint = NSLayoutConstraint(item: view.safeAreaLayoutGuide,
+                                                        attribute: .bottom,
+                                                        relatedBy: .equal,
+                                                        toItem: tableView,
+                                                        attribute: .bottom,
+                                                        multiplier: 1,
+                                                        constant: 0)
+        self.view.addConstraint(tablewViewBottonConstraint)
         
         NSLayoutConstraint.activate([
             activityIndicator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -58,12 +83,39 @@ final class PostalCodeViewController: UIViewController {
         activityIndicator.startAnimating()
         title = "Postal code list"
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchResultsUpdater = self
+        navigationItem.searchController = searchController
         viewModel?.getContacts { [weak self] in
             DispatchQueue.main.async {
                 self?.activityIndicator.stopAnimating()
                 self?.tableView.reloadData()
             }
         }
+    }
+    
+    @objc
+    private func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            let keyboardHeight = keyboardSize.height
+            tablewViewBottonConstraint.constant = keyboardHeight
+            view.layoutIfNeeded()
+        }
+    }
+    
+    @objc
+    private func keyboardWillHide(notification: NSNotification) {
+        tablewViewBottonConstraint.constant = 0
+        view.layoutIfNeeded()
+    }
+}
+
+extension PostalCodeViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchText = searchController.searchBar.text else { return }
+        viewModel?.filterContacts(with: searchText, completion: { [weak self] in
+            self?.tableView.reloadData()
+        })
     }
 }
 
@@ -72,7 +124,9 @@ extension PostalCodeViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostalCodeCell", for: indexPath) as? PostalCodeCell else {
             return UITableViewCell()
         }
-        guard let postalCodeValue = viewModel?.postalCodes[indexPath.row].formatedPostalCode() else {
+        guard let postalCodeValue = isFiltering
+                ? viewModel?.filteredPostalCodes[indexPath.row].formatedPostalCode
+                : viewModel?.postalCodes[indexPath.row].formatedPostalCode else {
             return UITableViewCell()
         }
         cell.setLabel(with: postalCodeValue)
@@ -80,10 +134,13 @@ extension PostalCodeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel?.postalCodes.count ?? 0
+        if isFiltering {
+            return viewModel?.filteredPostalCodes.count ?? 0
+        }
+        return viewModel?.postalCodes.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        40
+        UITableView.automaticDimension
     }
 }

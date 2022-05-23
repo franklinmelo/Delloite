@@ -16,6 +16,7 @@ struct PostalCode {
     let numCodPostal: String
     let extCodPostal: String
     let desigPostal: String
+    let formatedPostalCode: String
     
     init(data: [String]) {
         codDistrito = data[0]
@@ -35,9 +36,6 @@ struct PostalCode {
         numCodPostal = data[14]
         extCodPostal = data[15]
         desigPostal = data[16]
-    }
-    
-    func formatedPostalCode() -> String {
-        numCodPostal + "-" + extCodPostal + " " + desigPostal
+        formatedPostalCode = numCodPostal + "-" + extCodPostal + " " + desigPostal
     }
 }
